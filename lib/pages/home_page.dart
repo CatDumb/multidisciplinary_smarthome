@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_smarthome/pages/settings_page.dart';
+import 'package:flutter_smarthome/pages/smart_light_control_page.dart';
 import '../components/smart_device_box.dart';
 import '../components/room_box.dart';
 
@@ -11,7 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String activeUser = "Nho";
+  String activeUser = "Hiep";
   List<bool> isActiveList = [true, false, false, false];
   void updateIsActive(int index) {
     setState(() {
@@ -40,6 +41,12 @@ class _HomePageState extends State<HomePage> {
       mySmartDevices[index][2] = value;
     });
   }
+
+  void _navigateToSmartLight(String deviceName, bool isTurnedOn) => {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                SmartLightPage(deviceName: deviceName, isTurnedOn: isTurnedOn)))
+      };
 
   void _navigateToSettings() => {
         Navigator.push(context,
@@ -98,34 +105,10 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   GestureDetector(
                     onTap: () => updateIsActive(0),
-                    child: RoomBox(
-                      roomIcon: Icons.tv,
-                      roomName: "Living Room",
+                    child: DeviceTypeBox(
+                      roomIcon: Icons.lightbulb_outline_sharp,
+                      roomName: "Smart Lights",
                       isActive: isActiveList[0],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => updateIsActive(1),
-                    child: RoomBox(
-                      roomIcon: Icons.bed,
-                      roomName: "Bedroom",
-                      isActive: isActiveList[1],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => updateIsActive(2),
-                    child: RoomBox(
-                      roomIcon: Icons.dinner_dining,
-                      roomName: "Dining Room",
-                      isActive: isActiveList[2],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => updateIsActive(3),
-                    child: RoomBox(
-                      roomIcon: Icons.car_repair,
-                      roomName: "Garage",
-                      isActive: isActiveList[3],
                     ),
                   ),
                 ],
@@ -141,17 +124,13 @@ class _HomePageState extends State<HomePage> {
                   "Devices",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
-                GestureDetector(
-                  // placeholder
-                  child: Icon(Icons.more_horiz),
-                  onTap: () => print("Clicked on here"),
-                )
+                Icon(Icons.more_horiz)
               ],
             ),
           ),
           Expanded(
             child: GridView.builder(
-              itemCount: 4,
+              itemCount: 1,
               physics: const NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: 25),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -159,11 +138,15 @@ class _HomePageState extends State<HomePage> {
                 childAspectRatio: 1 / 1.2,
               ),
               itemBuilder: (context, index) {
-                return SmartDeviceBox(
-                  smartDeviceName: mySmartDevices[index][0],
-                  icon: mySmartDevices[index][1],
-                  powerOn: mySmartDevices[index][2],
-                  onChanged: (value) => powerSwitchChanged(value, index),
+                return GestureDetector(
+                  onTap: () => _navigateToSmartLight(
+                      mySmartDevices[index][0], mySmartDevices[index][2]),
+                  child: SmartDeviceBox(
+                    smartDeviceName: mySmartDevices[index][0],
+                    icon: mySmartDevices[index][1],
+                    powerOn: mySmartDevices[index][2],
+                    onChanged: (value) => powerSwitchChanged(value, index),
+                  ),
                 );
               },
             ),

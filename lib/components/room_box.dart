@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class RoomBox extends StatefulWidget {
+class DeviceTypeBox extends StatefulWidget {
   final IconData roomIcon;
   final String roomName;
   bool isActive;
 
-  RoomBox(
+  DeviceTypeBox(
       {Key? key,
       required this.roomIcon,
       required this.roomName,
@@ -13,10 +13,10 @@ class RoomBox extends StatefulWidget {
       : super(key: key);
 
   @override
-  _RoomBoxState createState() => _RoomBoxState();
+  _DeviceTypeBoxState createState() => _DeviceTypeBoxState();
 }
 
-class _RoomBoxState extends State<RoomBox> {
+class _DeviceTypeBoxState extends State<DeviceTypeBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
