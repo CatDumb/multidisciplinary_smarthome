@@ -42,10 +42,15 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _navigateToSmartLight(String deviceName, bool isTurnedOn) => {
+  void _navigateToSmartLight(
+          String deviceName, bool isTurnedOn, Function(bool)? onChanged) =>
+      {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) =>
-                SmartLightPage(deviceName: deviceName, isTurnedOn: isTurnedOn)))
+            builder: (context) => SmartLightPage(
+                  deviceName: deviceName,
+                  isTurnedOn: isTurnedOn,
+                  onChanged: onChanged,
+                )))
       };
 
   void _navigateToSettings() => {
@@ -130,7 +135,7 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: GridView.builder(
-              itemCount: 1,
+              itemCount: 4,
               physics: const NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: 25),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -140,12 +145,20 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () => _navigateToSmartLight(
-                      mySmartDevices[index][0], mySmartDevices[index][2]),
-                  child: SmartDeviceBox(
-                    smartDeviceName: mySmartDevices[index][0],
-                    icon: mySmartDevices[index][1],
-                    powerOn: mySmartDevices[index][2],
-                    onChanged: (value) => powerSwitchChanged(value, index),
+                    mySmartDevices[index][0],
+                    mySmartDevices[index][2],
+                    (value) => setState(() {
+                      mySmartDevices[index][2] = value;
+                    }),
+                  ),
+                  child: Hero(
+                    tag: 'device-${mySmartDevices[index][0]}',
+                    child: SmartDeviceBox(
+                      smartDeviceName: mySmartDevices[index][0],
+                      icon: mySmartDevices[index][1],
+                      powerOn: mySmartDevices[index][2],
+                      onChanged: (value) => powerSwitchChanged(value, index),
+                    ),
                   ),
                 );
               },

@@ -10,8 +10,34 @@ Future main() async {
   await dotenv.load();
   final String adafruitUsername = dotenv.env['ADAFRUIT_USERNAME']!;
   final String adafruitActiveKey = dotenv.env['ADAFRUIT_ACTIVE_KEY']!;
-  final String feedName = 'cambien1';
+  print(adafruitUsername);
+  final String feedName = 'fan';
 
+  // https://io.adafruit.com/api/v2/Kietlun9302/feeds/fan
+  // https://io.adafruit.com/api/v2/Kietlun9302/feeds/door
+  // https://io.adafruit.com/api/v2/Kietlun9302/feeds/door
+
+  final url = Uri.parse(
+      'https://io.adafruit.com/api/v2/$adafruitUsername/feeds/$feedName/data');
+
+  print(url);
+  final response = await http.post(
+    url,
+    headers: {
+      'X-AIO-Key': adafruitActiveKey,
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'value': 1, // Replace with the value you want to send to the feed
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    print('Data sent successfully');
+  } else {
+    print('Failed to send data: ${response.statusCode}');
+  }
+  /*
   final url = Uri.parse(
       'https://io.adafruit.com/api/v2/$adafruitUsername/feeds/$feedName/data');
 
@@ -29,12 +55,7 @@ Future main() async {
     // Do something with the data here
   } else {
     print('Failed to read feed data: ${response.statusCode}');
-  }
-
-  print(adafruitUsername);
-  print(adafruitActiveKey);
-  print("Douma load duoc roi!");
-
+  }*/
   runApp(const MyApp());
 }
 
