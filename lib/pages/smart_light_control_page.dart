@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_smarthome/main.dart';
 
 class SmartLightPage extends StatefulWidget {
   String deviceName;
@@ -41,6 +38,7 @@ class _SmartLightPageState extends State<SmartLightPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: const Text(
           "Customizing device",
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -62,7 +60,7 @@ class _SmartLightPageState extends State<SmartLightPage> {
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
                         widget.deviceName,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 25),
                       ),
                     ),
@@ -85,7 +83,7 @@ class _SmartLightPageState extends State<SmartLightPage> {
                                 currentColor.withOpacity(0.0),
                               ],
                               focalRadius: 2.0,
-                              stops: [0.0, 1.0],
+                              stops: const [0.0, 1.0],
                               center: Alignment.bottomCenter,
                               radius: 0.8,
                             )
@@ -95,18 +93,15 @@ class _SmartLightPageState extends State<SmartLightPage> {
                                 currentColor.withOpacity(0.0),
                               ],
                               focalRadius: 2.0,
-                              stops: [0.0, 1.0],
+                              stops: const [0.0, 1.0],
                               center: Alignment.bottomCenter,
                               radius: 0.8,
                             ),
                     ),
-                    child: Hero(
-                      tag: 'device-${widget.deviceName}',
-                      child: Icon(
-                        Icons.light,
-                        color: Colors.black,
-                        size: MediaQuery.of(context).size.width / 5,
-                      ),
+                    child: Icon(
+                      Icons.light,
+                      color: Colors.black,
+                      size: MediaQuery.of(context).size.width / 5,
                     ),
                   ),
                 ),

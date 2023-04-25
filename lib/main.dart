@@ -17,26 +17,26 @@ Future main() async {
   // https://io.adafruit.com/api/v2/Kietlun9302/feeds/door
   // https://io.adafruit.com/api/v2/Kietlun9302/feeds/door
 
-  final url = Uri.parse(
-      'https://io.adafruit.com/api/v2/$adafruitUsername/feeds/$feedName/data');
+  // final url = Uri.parse(
+  //     'https://io.adafruit.com/api/v2/$adafruitUsername/feeds/$feedName/data');
 
-  print(url);
-  final response = await http.post(
-    url,
-    headers: {
-      'X-AIO-Key': adafruitActiveKey,
-      'Content-Type': 'application/json',
-    },
-    body: jsonEncode({
-      'value': 1, // Replace with the value you want to send to the feed
-    }),
-  );
+  // print(url);
+  // final response = await http.post(
+  //   url,
+  //   headers: {
+  //     'X-AIO-Key': adafruitActiveKey,
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: jsonEncode({
+  //     'value': 1, // Replace with the value you want to send to the feed
+  //   }),
+  // );
 
-  if (response.statusCode == 200) {
-    print('Data sent successfully');
-  } else {
-    print('Failed to send data: ${response.statusCode}');
-  }
+  // if (response.statusCode == 200) {
+  //   print('Data sent successfully');
+  // } else {
+  //   print('Failed to send data: ${response.statusCode}');
+  // }
   /*
   final url = Uri.parse(
       'https://io.adafruit.com/api/v2/$adafruitUsername/feeds/$feedName/data');

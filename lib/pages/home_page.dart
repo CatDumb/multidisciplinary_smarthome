@@ -3,6 +3,7 @@ import 'package:flutter_smarthome/pages/settings_page.dart';
 import 'package:flutter_smarthome/pages/smart_light_control_page.dart';
 import '../components/smart_device_box.dart';
 import '../components/room_box.dart';
+import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,7 +13,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String activeUser = "Hiep";
+  String _activeDeviceType = 'Smart Light';
+  void _setActiveDeviceType(String deviceType) {
+    setState(() {
+      _activeDeviceType = deviceType;
+    });
+    print(_activeDeviceType);
+  }
+
   List<bool> isActiveList = [true, false, false, false];
   void updateIsActive(int index) {
     setState(() {
@@ -27,18 +35,20 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  List mySmartDevices = [
+  final List _smartDevices = [
     // [ smartDeviceName, iconPath , powerStatus ]
     ["Smart Light 1", Icons.light, true],
     ["Smart Light 2", Icons.light, false],
     ["Smart Light 3", Icons.light_mode, false],
     ["Smart Light 4", Icons.light_sharp, false],
+    ["Door Lock 1", Icons.lock, false],
+    ["Smart Fan 1", Icons.air, false],
   ];
 
   // power button switched
   void powerSwitchChanged(bool value, int index) {
     setState(() {
-      mySmartDevices[index][2] = value;
+      _smartDevices[index][2] = value;
     });
   }
 
@@ -61,6 +71,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         leading: const Icon(
           Icons.menu_outlined,
           size: 30,
@@ -76,7 +87,6 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
       ),
-      backgroundColor: Colors.grey[100],
       body: SafeArea(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           // hello text
@@ -88,13 +98,13 @@ class _HomePageState extends State<HomePage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   // ignore: prefer_const_literals_to_create_immutables
-                  children: [
+                  children: const [
                     Text(
-                      "Hi $activeUser!",
-                      style: const TextStyle(
-                          fontSize: 40, fontWeight: FontWeight.bold),
+                      "Welcome back!",
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                     ),
-                    const Text("Welcome to your smart home"),
+                    Text("Your smarthome is ready"),
                   ],
                 ),
               ],
@@ -109,11 +119,36 @@ class _HomePageState extends State<HomePage> {
                 scrollDirection: Axis.horizontal,
                 children: [
                   GestureDetector(
-                    onTap: () => updateIsActive(0),
+                    onTap: () {
+                      updateIsActive(0);
+                      _setActiveDeviceType("Smart Light");
+                    },
                     child: DeviceTypeBox(
                       roomIcon: Icons.lightbulb_outline_sharp,
                       roomName: "Smart Lights",
                       isActive: isActiveList[0],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      updateIsActive(1);
+                      _setActiveDeviceType("Door Lock");
+                    },
+                    child: DeviceTypeBox(
+                      roomIcon: Icons.lock,
+                      roomName: "Door Locks",
+                      isActive: isActiveList[1],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      updateIsActive(2);
+                      _setActiveDeviceType("Smart Fan");
+                    },
+                    child: DeviceTypeBox(
+                      roomIcon: Icons.air,
+                      roomName: "Fans",
+                      isActive: isActiveList[2],
                     ),
                   ),
                 ],
@@ -124,8 +159,8 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(bottom: 5, left: 20, right: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
+              children: const [
+                Text(
                   "Devices",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
@@ -135,7 +170,9 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: GridView.builder(
-              itemCount: 4,
+              itemCount: _smartDevices
+                  .where((device) => device[0].startsWith(_activeDeviceType))
+                  .length,
               physics: const NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: 25),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -143,22 +180,24 @@ class _HomePageState extends State<HomePage> {
                 childAspectRatio: 1 / 1.2,
               ),
               itemBuilder: (context, index) {
+                final List<dynamic> device = _smartDevices
+                    .where((device) => device[0].startsWith(_activeDeviceType))
+                    .elementAt(index);
                 return GestureDetector(
                   onTap: () => _navigateToSmartLight(
-                    mySmartDevices[index][0],
-                    mySmartDevices[index][2],
+                    device[0],
+                    device[2],
                     (value) => setState(() {
-                      mySmartDevices[index][2] = value;
+                      device[2] = value;
                     }),
                   ),
-                  child: Hero(
-                    tag: 'device-${mySmartDevices[index][0]}',
-                    child: SmartDeviceBox(
-                      smartDeviceName: mySmartDevices[index][0],
-                      icon: mySmartDevices[index][1],
-                      powerOn: mySmartDevices[index][2],
-                      onChanged: (value) => powerSwitchChanged(value, index),
-                    ),
+                  child: SmartDeviceBox(
+                    smartDeviceName: device[0],
+                    icon: device[1],
+                    powerOn: device[2],
+                    onChanged: (value) => setState(() {
+                      device[2] = value;
+                    }),
                   ),
                 );
               },

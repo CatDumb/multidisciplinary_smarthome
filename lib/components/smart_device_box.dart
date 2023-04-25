@@ -25,7 +25,8 @@ class SmartDeviceBox extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: powerOn ? Colors.black : Color.fromARGB(44, 164, 167, 189),
+          color:
+              powerOn ? Colors.black : const Color.fromARGB(44, 164, 167, 189),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 30.0),
