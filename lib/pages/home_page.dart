@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_smarthome/pages/settings_page.dart';
-import 'package:flutter_smarthome/pages/smart_device_control_page.dart';
+import '../pages/smart_device_control_page.dart';
 import 'package:flutter_smarthome/pages/smart_light_control_page.dart';
 import '../components/smart_device_box.dart';
 import '../components/room_box.dart';
@@ -59,6 +59,7 @@ class _HomePageState extends State<HomePage> {
       final led4Values =
           await adafruitDataService.fetchLastTwoData(feed: "led4");
       final doorLockValues = await adafruitDataService.fetchData(feed: "door");
+      final fanValue = await adafruitDataService.fetchData(feed: "fan");
 
       setState(() {
         // led 1
@@ -75,6 +76,8 @@ class _HomePageState extends State<HomePage> {
         _newSmartDevices[3][4] = led4Values[1];
         // door
         _newSmartDevices[4][3] = doorLockValues;
+        // fan
+        _newSmartDevices[5][3] = fanValue;
       });
       for (int i = 0; i < _newSmartDevices.length; i++) {
         // print(_newSmartDevices[i][3]);
@@ -123,6 +126,26 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _newSmartDevices[index][2] = value;
     });
+  }
+
+  void _navigateToSmartFan(
+      AdafruitDataService adafruitDataService,
+      String deviceName,
+      String feedName,
+      String currentValue,
+      String previousValue,
+      bool isTurnedOn,
+      Function(bool)? onChanged) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => FanControlPage(
+              adafruitDataService: adafruitDataService,
+              deviceName: deviceName,
+              feedName: feedName,
+              currentValue: currentValue,
+              previousValue: previousValue,
+              isTurnedOn: isTurnedOn,
+              onChanged: onChanged,
+            )));
   }
 
   void _navigateToSmartLight(
@@ -299,6 +322,26 @@ class _HomePageState extends State<HomePage> {
                         feed: device[5],
                         dataValue: device[2] ? '1' : '0',
                       );
+                    } else {
+                      _navigateToSmartFan(
+                        adafruitDataService,
+                        device[0],
+                        device[5],
+                        device[3],
+                        device[4].toString(),
+                        device[2],
+                        (value) => setState(() {
+                          // mySmartDevices[index][2] = value;
+                          device[2] = value;
+                        }),
+                      );
+                      /*
+                      setState(() {
+                        device[2] = !device[2];
+                      });
+
+                      adafruitDataService.sendData(
+                          feed: device[5], dataValue: device[2] ? ' 20' : '0');*/
                     }
                   },
                   child: SmartDeviceBox(
