@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_smarthome/services/adafruit_data_service.dart';
 import './pages/home_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -10,8 +13,8 @@ Future main() async {
   await dotenv.load();
   final String adafruitUsername = dotenv.env['ADAFRUIT_USERNAME']!;
   final String adafruitActiveKey = dotenv.env['ADAFRUIT_ACTIVE_KEY']!;
-  print(adafruitUsername);
-  final String feedName = 'fan';
+  // print(adafruitUsername);
+  // final String feedName = 'fan';
 
   // https://io.adafruit.com/api/v2/Kietlun9302/feeds/fan
   // https://io.adafruit.com/api/v2/Kietlun9302/feeds/door
@@ -56,7 +59,14 @@ Future main() async {
   } else {
     print('Failed to read feed data: ${response.statusCode}');
   }*/
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+          create: (_) =>
+              AdafruitDataService(adafruitUsername, adafruitActiveKey))
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
