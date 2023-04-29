@@ -80,28 +80,12 @@ class _SmartLightPageState extends State<SmartLightPage> {
     widget.deviceDataCallback(
         widget.currentValue, widget.previousValue, isTurnedOn);
   }
-  /*
-  void powerSwitchChanged(bool value) {
-    setState(() {
-      widget.isTurnedOn = !widget.isTurnedOn;
-    });
-
-    if (widget.onChanged != null) {
-      widget.onChanged!(widget.isTurnedOn);
-    }
-  }
-  */
-  // late final String _currentColor =
-  //     (widget.isTurnedOn && widget.currentValue == "000000")
-  //         ? "0xFF${widget.previousValue}"
-  //         : "0xFF${widget.currentValue}";
 
   Color get _currentColor => Color.fromRGBO(redValue, greenValue, blueValue, 1);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: const Text(
@@ -116,10 +100,6 @@ class _SmartLightPageState extends State<SmartLightPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              color: _currentColor,
-              height: 20,
-            ),
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [

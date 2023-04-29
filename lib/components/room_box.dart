@@ -28,9 +28,7 @@ class _DeviceTypeBoxState extends State<DeviceTypeBox> {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: widget.isActive
-                  ? Colors.black
-                  : const Color.fromARGB(44, 164, 167, 189),
+              color: widget.isActive ? Colors.black : Colors.grey[200],
             ),
             height: 90.0,
             width: 100,

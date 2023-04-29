@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_smarthome/pages/settings_page.dart';
-import '../pages/smart_device_control_page.dart';
 import 'package:flutter_smarthome/pages/smart_light_control_page.dart';
 import '../components/smart_device_box.dart';
+import 'smart_device_control_page.dart';
 import '../components/room_box.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -60,6 +60,7 @@ class _HomePageState extends State<HomePage> {
           await adafruitDataService.fetchLastTwoData(feed: "led4");
       final doorLockValues = await adafruitDataService.fetchData(feed: "door");
       final fanValue = await adafruitDataService.fetchData(feed: "fan");
+      print(fanValue);
 
       setState(() {
         // led 1
@@ -133,18 +134,14 @@ class _HomePageState extends State<HomePage> {
       String deviceName,
       String feedName,
       String currentValue,
-      String previousValue,
-      bool isTurnedOn,
-      Function(bool)? onChanged) {
+      bool isTurnedOn) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => FanControlPage(
               adafruitDataService: adafruitDataService,
               deviceName: deviceName,
               feedName: feedName,
               currentValue: currentValue,
-              previousValue: previousValue,
               isTurnedOn: isTurnedOn,
-              onChanged: onChanged,
             )));
   }
 
@@ -328,20 +325,8 @@ class _HomePageState extends State<HomePage> {
                         device[0],
                         device[5],
                         device[3],
-                        device[4].toString(),
                         device[2],
-                        (value) => setState(() {
-                          // mySmartDevices[index][2] = value;
-                          device[2] = value;
-                        }),
                       );
-                      /*
-                      setState(() {
-                        device[2] = !device[2];
-                      });
-
-                      adafruitDataService.sendData(
-                          feed: device[5], dataValue: device[2] ? ' 20' : '0');*/
                     }
                   },
                   child: SmartDeviceBox(
@@ -353,20 +338,34 @@ class _HomePageState extends State<HomePage> {
                         device[2] = value;
                       });
                       String dataToSend;
-                      if (value == true) {
-                        // If turning on the light
-                        if (device[3] == "000000") {
-                          // If current value is RGB color
-                          dataToSend = device[
-                              4]; // Use previous value to turn on the light
+                      if (device[0].startsWith("Smart Light")) {
+                        if (value == true) {
+                          // If turning on the light
+                          if (device[3] == "000000") {
+                            // If current value is RGB color
+                            dataToSend = device[
+                                4]; // Use previous value to turn on the light
+                          } else {
+                            dataToSend = device[
+                                3]; // Use current value to turn on the light
+                          }
                         } else {
-                          dataToSend = device[
-                              3]; // Use current value to turn on the light
+                          // If turning off the light
+                          dataToSend =
+                              "000000"; // Send "000000" to turn off the light
+                        }
+                      } else if (device[0].startsWith("Door Lock")) {
+                        if (value == true) {
+                          dataToSend = "1";
+                        } else {
+                          dataToSend = "0";
                         }
                       } else {
-                        // If turning off the light
-                        dataToSend =
-                            "000000"; // Send "000000" to turn off the light
+                        if (value == true) {
+                          dataToSend = "40";
+                        } else {
+                          dataToSend = "0";
+                        }
                       }
                       adafruitDataService.sendData(
                           feed: device[5], dataValue: dataToSend);

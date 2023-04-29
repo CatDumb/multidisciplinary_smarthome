@@ -1,25 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_smarthome/services/adafruit_data_service.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class FanControlPage extends StatefulWidget {
   AdafruitDataService adafruitDataService;
   String deviceName;
   String feedName;
   String currentValue;
-  String previousValue;
   bool isTurnedOn;
-  Function(bool value)? onChanged;
   FanControlPage({
     Key? key,
     required this.adafruitDataService,
     required this.deviceName,
     required this.feedName,
     required this.currentValue,
-    required this.previousValue,
     required this.isTurnedOn,
-    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -28,8 +23,10 @@ class FanControlPage extends StatefulWidget {
 
 class _FanControlPageState extends State<FanControlPage> {
   late int _fanPower = int.parse(widget.currentValue);
+
   @override
   void initState() {
+    print(_fanPower);
     super.initState();
   }
 
@@ -38,24 +35,9 @@ class _FanControlPageState extends State<FanControlPage> {
         .sendData(feed: widget.feedName, dataValue: _fanPower.toString());
   }
 
-  void turnOff() {
-    widget.adafruitDataService.sendData(feed: widget.feedName, dataValue: "0");
-  }
-
-  void powerSwitchChanged(bool value) {
-    setState(() {
-      widget.isTurnedOn = !widget.isTurnedOn;
-    });
-
-    if (widget.onChanged != null) {
-      widget.onChanged!(widget.isTurnedOn);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: const Text(
@@ -71,12 +53,12 @@ class _FanControlPageState extends State<FanControlPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(32.0),
                       child: Text(
                         widget.deviceName,
                         style: const TextStyle(
@@ -85,48 +67,18 @@ class _FanControlPageState extends State<FanControlPage> {
                     ),
                   ],
                 ),
-                GestureDetector(
-                  onTap: () {
-                    HapticFeedback.heavyImpact();
-                    powerSwitchChanged(widget.isTurnedOn);
-                    if (!widget.isTurnedOn) {
-                      turnOff();
-                    } else {
-                      updateFeed();
-                    }
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width / 1.1,
-                    height: MediaQuery.of(context).size.width / 1,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: widget.isTurnedOn
-                          ? RadialGradient(
-                              colors: [
-                                (Colors.grey).withOpacity(1.0),
-                                Colors.grey.withOpacity(0.0),
-                              ],
-                              focalRadius: 2.0,
-                              stops: const [0.0, 1.0],
-                              center: Alignment.bottomCenter,
-                              radius: 0.85,
-                            )
-                          : RadialGradient(
-                              colors: [
-                                Colors.grey.withOpacity(0.0),
-                                Colors.grey.withOpacity(0.0),
-                              ],
-                              focalRadius: 2.0,
-                              stops: const [0.0, 1.0],
-                              center: Alignment.bottomCenter,
-                              radius: 0.8,
-                            ),
-                    ),
-                    child: Icon(
-                      (Icons.air),
-                      color: Colors.black,
-                      size: MediaQuery.of(context).size.width / 5,
-                    ),
+                Container(
+                  width: MediaQuery.of(context).size.width / 2,
+                  height: MediaQuery.of(context).size.width / 2,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    border: Border.all(width: 2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    (Icons.air),
+                    color: Colors.white,
+                    size: MediaQuery.of(context).size.width / 5,
                   ),
                 ),
               ],
@@ -136,6 +88,7 @@ class _FanControlPageState extends State<FanControlPage> {
               child: Slider(
                 activeColor: Colors.black,
                 value: _fanPower.toDouble(),
+                divisions: 5,
                 min: 0,
                 max: 100,
                 onChanged: (value) {
