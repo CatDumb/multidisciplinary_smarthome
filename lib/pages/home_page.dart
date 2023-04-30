@@ -118,8 +118,8 @@ class _HomePageState extends State<HomePage> {
     ["Smart Light 2", Icons.lightbulb_outline, false, "", "", 'led2'],
     ["Smart Light 3", Icons.lightbulb_outline, false, "", "", 'led3'],
     ["Smart Light 4", Icons.lightbulb_outline, false, "", "", 'led4'],
-    ["Door Lock 1", Icons.lock, "", "", false, 'door'],
-    ["Smart Fan 1", Icons.air, "", "", false, 'fan'],
+    ["Door Lock 1", Icons.lock, false, "", "", 'door'],
+    ["Smart Fan 1", Icons.air, false, "", "", 'fan'],
   ];
 
   // power button switched
@@ -129,12 +129,26 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _handleFanValueChanged(bool newValue) {
+    setState(() {
+      _newSmartDevices[5][2] = newValue;
+    });
+  }
+
+  void _updateFanValue(String newValue) {
+    setState(() {
+      _newSmartDevices[5][3] = newValue;
+    });
+  }
+
   void _navigateToSmartFan(
       AdafruitDataService adafruitDataService,
       String deviceName,
       String feedName,
       String currentValue,
-      bool isTurnedOn) {
+      bool isTurnedOn,
+      ValueChanged<bool> onValueChanged,
+      ValueChanged<String> onPowerChanged) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => FanControlPage(
               adafruitDataService: adafruitDataService,
@@ -142,6 +156,8 @@ class _HomePageState extends State<HomePage> {
               feedName: feedName,
               currentValue: currentValue,
               isTurnedOn: isTurnedOn,
+              onValueChanged: onValueChanged,
+              onPowerChanged: onPowerChanged,
             )));
   }
 
@@ -321,12 +337,13 @@ class _HomePageState extends State<HomePage> {
                       );
                     } else {
                       _navigateToSmartFan(
-                        adafruitDataService,
-                        device[0],
-                        device[5],
-                        device[3],
-                        device[2],
-                      );
+                          adafruitDataService,
+                          device[0],
+                          device[5],
+                          device[3],
+                          device[2],
+                          _handleFanValueChanged,
+                          _updateFanValue);
                     }
                   },
                   child: SmartDeviceBox(
@@ -361,9 +378,17 @@ class _HomePageState extends State<HomePage> {
                           dataToSend = "0";
                         }
                       } else {
+                        // fan control here
+
                         if (value == true) {
+                          setState(() {
+                            device[3] = "40";
+                          });
                           dataToSend = "40";
                         } else {
+                          setState(() {
+                            device[3] = "0";
+                          });
                           dataToSend = "0";
                         }
                       }

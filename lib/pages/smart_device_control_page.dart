@@ -8,29 +8,49 @@ class FanControlPage extends StatefulWidget {
   String feedName;
   String currentValue;
   bool isTurnedOn;
-  FanControlPage({
-    Key? key,
-    required this.adafruitDataService,
-    required this.deviceName,
-    required this.feedName,
-    required this.currentValue,
-    required this.isTurnedOn,
-  }) : super(key: key);
+  final ValueChanged<bool> onValueChanged;
+  final ValueChanged<String> onPowerChanged;
+
+  FanControlPage(
+      {Key? key,
+      required this.adafruitDataService,
+      required this.deviceName,
+      required this.feedName,
+      required this.currentValue,
+      required this.isTurnedOn,
+      required this.onValueChanged,
+      required this.onPowerChanged})
+      : super(key: key);
 
   @override
   State<FanControlPage> createState() => _FanControlPageState();
 }
 
 class _FanControlPageState extends State<FanControlPage> {
-  late int _fanPower = int.parse(widget.currentValue);
+  late int _fanPower;
 
   @override
   void initState() {
-    print(_fanPower);
+    _fanPower = int.parse(widget.currentValue);
     super.initState();
   }
 
   void updateFeed() {
+    if (_fanPower == 0) {
+      setState(() {
+        widget.isTurnedOn = false;
+        widget.currentValue = "0";
+      });
+      widget.onValueChanged(false);
+      widget.onPowerChanged("0");
+    } else {
+      setState(() {
+        widget.isTurnedOn = true;
+        widget.currentValue = _fanPower.toString();
+      });
+      widget.onValueChanged(true);
+      widget.onPowerChanged(_fanPower.toString());
+    }
     widget.adafruitDataService
         .sendData(feed: widget.feedName, dataValue: _fanPower.toString());
   }
