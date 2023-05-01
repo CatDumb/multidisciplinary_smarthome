@@ -88,11 +88,10 @@ class _FanControlPageState extends State<FanControlPage> {
                   ],
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width / 2,
-                  height: MediaQuery.of(context).size.width / 2,
-                  decoration: BoxDecoration(
+                  width: MediaQuery.of(context).size.width / 1.2,
+                  height: MediaQuery.of(context).size.width / 1.2,
+                  decoration: const BoxDecoration(
                     color: Colors.black,
-                    border: Border.all(width: 2),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(

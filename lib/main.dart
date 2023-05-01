@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_smarthome/services/adafruit_data_service.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import './pages/home_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
   await dotenv.load();
   final String adafruitUsername = dotenv.env['ADAFRUIT_USERNAME']!;
   final String adafruitActiveKey = dotenv.env['ADAFRUIT_ACTIVE_KEY']!;
+  var box = await Hive.openBox('my_smart_devices');
   // print(adafruitUsername);
   // final String feedName = 'fan';
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key});
@@ -6,32 +7,18 @@ class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
-      body: SafeArea(
-          child: Column(children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Icon(Icons.arrow_back)),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                // ignore: prefer_const_literals_to_create_immutables
-                children: [
-                  const Text(
-                    "Hi Phuc",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-                  ),
-                  const Text("Let's customize"),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ])),
+      appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        title: const Text("Smart Home"),
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+      ),
+      body: const SafeArea(
+          child: Center(
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: Text("Developed by Đồ ăn 222 team.")),
+      )),
     );
   }
 }
