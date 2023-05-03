@@ -205,7 +205,7 @@ class _HomePageState extends State<HomePage> {
               onTap: _navigateToSettings,
               child: const Padding(
                 padding: EdgeInsets.only(right: 10.0),
-                child: Icon(Icons.person_outline, size: 30),
+                child: Icon(Icons.auto_graph_outlined, size: 30),
               ))
         ],
         backgroundColor: Colors.transparent,
@@ -330,7 +330,6 @@ class _HomePageState extends State<HomePage> {
                                         })
                                       },
                                     )));
-                            print("Stop being dumb ${device[2]}");
                           } else if (device[0].startsWith("Door Lock")) {
                             // String dataToSend = device[2] ? '1' : '0';
                             setState(() {
