@@ -23,8 +23,11 @@ class _SettingPageState extends State<SettingPage> {
   final _myBox = Hive.box('my_smart_devices');
 
   List<DataPoint> _dataPoints = [];
+  List<DataPoint> _humidityPoints = [];
   late bool _isLoading;
   late String _currentTemp = _myBox.get('temp', defaultValue: "...");
+  late String _currentHum = _myBox.get('hum', defaultValue: "...");
+
   late String _currentLock = "...";
   Timer? _timer;
 
@@ -35,11 +38,11 @@ class _SettingPageState extends State<SettingPage> {
     super.initState();
     _isMounted = true;
     _isLoading = true;
-    _fetchThermostatData();
+    _fetchThermostatAndHumidData();
     _fetchLockData();
     _isLoading = false;
     _timer = Timer.periodic(
-        const Duration(seconds: 5), (_) => _fetchThermostatData());
+        const Duration(seconds: 5), (_) => _fetchThermostatAndHumidData());
     _myBox.put('temp', _currentTemp);
   }
 
@@ -52,13 +55,17 @@ class _SettingPageState extends State<SettingPage> {
     }
   }
 
-  void _fetchThermostatData() async {
+  void _fetchThermostatAndHumidData() async {
     final currentTemp = await adafruitDataService.fetchData(feed: "temp");
+    final currentHum = await adafruitDataService.fetchData(feed: "hum");
     if (_isMounted) {
       setState(() {
         _currentTemp = currentTemp;
+        _currentHum = currentHum;
         _dataPoints
             .add(DataPoint((_dataPoints.length), double.parse(currentTemp)));
+        _humidityPoints
+            .add(DataPoint((_humidityPoints.length), double.parse(currentHum)));
       });
     }
   }
@@ -75,7 +82,10 @@ class _SettingPageState extends State<SettingPage> {
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle.dark,
-        title: const Text("Smart Home Statistics"),
+        title: const Text(
+          "Smart Home Statistics",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
       ),
@@ -95,11 +105,10 @@ class _SettingPageState extends State<SettingPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: const [
                               Text(
-                                "Home temp and door",
+                                "Home temperature and humidity",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 20),
                               ),
-                              Icon(Icons.more_horiz)
                             ],
                           ),
                         ),
@@ -113,12 +122,8 @@ class _SettingPageState extends State<SettingPage> {
                                 fillColor: Colors.black,
                               ),
                               StatsBox(
-                                deviceReading: _currentLock == "true"
-                                    ? "Locked"
-                                    : "Unlocked",
-                                fillColor: _currentLock == "true"
-                                    ? Colors.red
-                                    : Colors.green,
+                                deviceReading: "$_currentHum%",
+                                fillColor: Colors.teal,
                               )
                             ],
                           ),
@@ -129,7 +134,7 @@ class _SettingPageState extends State<SettingPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: const [
                               Text(
-                                "Temperature chart",
+                                "Line chart",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 20),
                               )
@@ -139,20 +144,29 @@ class _SettingPageState extends State<SettingPage> {
                         Center(
                           child: Container(
                             width: MediaQuery.of(context).size.width / 1.1,
-                            height: MediaQuery.of(context).size.height / 2,
+                            height: MediaQuery.of(context).size.height / 2.5,
                             child: SfCartesianChart(
                               legend: Legend(
-                                  title: LegendTitle(text: "Temp (ºC)"),
                                   isVisible: true,
                                   position: LegendPosition.bottom),
                               primaryXAxis: NumericAxis(),
                               primaryYAxis: NumericAxis(),
                               series: <LineSeries<DataPoint, int>>[
                                 LineSeries<DataPoint, int>(
+                                  name: "Temperature (ºC)",
                                   color: Colors.black,
                                   dataSource: _dataPoints,
                                   xValueMapper: (DataPoint data, _) => data.x,
                                   yValueMapper: (DataPoint data, _) => data.y,
+                                ),
+                                LineSeries<DataPoint, int>(
+                                  color: Colors.teal,
+                                  dataSource:
+                                      _humidityPoints, // your humidity data
+                                  xValueMapper: (DataPoint data, _) => data.x,
+                                  yValueMapper: (DataPoint data, _) => data.y,
+                                  name: 'Humidity (%)',
+                                  // other properties
                                 ),
                               ],
                             ),
