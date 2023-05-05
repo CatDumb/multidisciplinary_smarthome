@@ -65,7 +65,7 @@ event_manager.add_timer_event(10000, on_event_timer_callback_S_q_b_i_y)
 if True:
   display.scroll('X')
   mqtt.connect_wifi('QUANGKIET', '02838331443')
-  mqtt.connect_broker(server='io.adafruit.com', port=1883, username='Kietlun9302', password='aio_nWgL63JKpMGPYqz5CZTATiOvzWpq')
+  mqtt.connect_broker(server='io.adafruit.com', port=1883, username='Kietlun9302', password='secret_key_goes_here!')
   _h_Wl4_R1K2J_S_600o_vn = dht.DHT11(Pin(pin2.pin))
   display.scroll('o')
 
